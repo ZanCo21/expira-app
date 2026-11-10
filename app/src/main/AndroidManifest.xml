@@ -10,6 +10,8 @@
     <application
         android:name=".ExpiraApplication"
         android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="false"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Expira">

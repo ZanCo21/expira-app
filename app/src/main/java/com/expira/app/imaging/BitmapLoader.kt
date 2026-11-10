@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.Uri
+import androidx.core.graphics.scale
 import androidx.exifinterface.media.ExifInterface
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -50,12 +51,7 @@ class ContentBitmapLoader(
         val longest = max(bitmap.width, bitmap.height)
         if (longest <= maxDimension) return bitmap
         val ratio = maxDimension.toFloat() / longest
-        val scaled = Bitmap.createScaledBitmap(
-            bitmap,
-            (bitmap.width * ratio).roundToInt(),
-            (bitmap.height * ratio).roundToInt(),
-            true,
-        )
+        val scaled = bitmap.scale((bitmap.width * ratio).roundToInt(), (bitmap.height * ratio).roundToInt())
         if (scaled !== bitmap) bitmap.recycle()
         return scaled
     }

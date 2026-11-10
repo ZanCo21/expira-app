@@ -1,6 +1,7 @@
 package com.expira.app.ui.processing
 
 import android.net.Uri
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.createSavedStateHandle
@@ -46,7 +47,7 @@ class ProcessingViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val app = this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as ExpiraApplication
-                val uri = Uri.parse(checkNotNull(createSavedStateHandle().get<String>(ARG_IMAGE_URI)))
+                val uri = checkNotNull(createSavedStateHandle().get<String>(ARG_IMAGE_URI)).toUri()
                 ProcessingViewModel(uri, app.container.bitmapLoader, app.container.scanDateUseCase)
             }
         }
