@@ -10,8 +10,10 @@ package com.expira.app.extraction
  * Selection: dates governed by an expiry keyword win. Otherwise dates without any keyword
  * are used, latest first. Dates governed by a production keyword are never chosen; they
  * stay in [ExtractionResult.candidates] for manual confirmation.
+ *
+ * @param validator when given, dates outside its accepted year range are dropped.
  */
-class DateExtractor {
+class DateExtractor(private val validator: DateValidator? = null) {
 
     fun extract(lines: List<TextLine>): ExtractionResult {
         val prepared = lines.map { prepare(it.text) }
@@ -52,6 +54,7 @@ class DateExtractor {
                 val range = match.range
                 if (found.any { range.first < it.end && it.start <= range.last }) continue
                 val date = pattern.toDate(match.groupValues) ?: continue
+                if (validator?.isAcceptable(date) == false) continue
                 found += FoundDate(range.first, range.last + 1, date, pattern.format)
             }
         }
