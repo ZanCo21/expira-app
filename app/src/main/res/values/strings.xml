@@ -18,6 +18,20 @@
     <string name="home_take_photo">Ambil Foto</string>
     <string name="home_pick_gallery">Pilih dari Galeri</string>
 
+    <!-- Memproses -->
+    <string name="processing_title">Memproses</string>
+    <string name="processing_photo">Foto kemasan</string>
+    <string name="processing_offline_note">Berjalan di perangkat. Tidak memerlukan koneksi internet.</string>
+    <string name="processing_duration_ms">%1$d ms</string>
+    <string name="processing_running">Berjalan…</string>
+    <string name="processing_waiting">Menunggu</string>
+    <string name="processing_error_image">Gambar tidak dapat dibuka. Coba pilih foto lain.</string>
+    <string name="processing_error_ocr">Teks gagal dibaca. Coba foto ulang.</string>
+    <string name="stage_preprocess">Preprocessing citra</string>
+    <string name="stage_ocr">Membaca teks (OCR)</string>
+    <string name="stage_extract">Mengekstrak tanggal</string>
+    <string name="stage_validate">Validasi hasil</string>
+
     <!-- Riwayat -->
     <string name="history_title">Riwayat</string>
 
