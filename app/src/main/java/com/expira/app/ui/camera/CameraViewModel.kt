@@ -23,11 +23,17 @@ data class CameraUiState(
     val isFlashOn: Boolean = false,
     val isCapturing: Boolean = false,
     val captureFailed: Boolean = false,
+    /** Live preview looks blurry (variance of Laplacian below the threshold). */
+    val isBlurry: Boolean = false,
     /** Set once the cropped capture is saved; the screen navigates and then clears it. */
     val capturedImage: Uri? = null,
 )
 
-class CameraViewModel(private val imageStore: ScanImageStore) : ViewModel() {
+class CameraViewModel(
+    private val imageStore: ScanImageStore,
+    /** Blur detection needs OpenCV; without it the warning is simply never shown. */
+    val isBlurDetectionEnabled: Boolean,
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CameraUiState())
     val uiState: StateFlow<CameraUiState> = _uiState.asStateFlow()
@@ -50,13 +56,16 @@ class CameraViewModel(private val imageStore: ScanImageStore) : ViewModel() {
         }
     }
 
+    /** Called from the analysis thread; StateFlow updates are thread-safe. */
+    fun onBlurChanged(isBlurry: Boolean) = _uiState.update { it.copy(isBlurry = isBlurry) }
+
     fun onNavigated() = _uiState.update { it.copy(capturedImage = null) }
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val app = this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as ExpiraApplication
-                CameraViewModel(app.container.scanImageStore)
+                CameraViewModel(app.container.scanImageStore, isBlurDetectionEnabled = app.isOpenCvReady)
             }
         }
     }

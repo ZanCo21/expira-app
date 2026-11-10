@@ -44,6 +44,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -67,6 +68,7 @@ import com.expira.app.imaging.NormalizedRect
 import com.expira.app.ui.components.PrimaryButton
 import com.expira.app.ui.components.SecondaryButton
 import com.expira.app.ui.theme.ExpiraColors
+import java.util.concurrent.Executors
 
 /** Figma "Kamera" (3:63). */
 @Composable
@@ -111,6 +113,8 @@ fun CameraRoute(
                 onCaptureStarted = viewModel::onCaptureStarted,
                 onCaptured = viewModel::onFrameCaptured,
                 onCaptureFailed = viewModel::onCaptureFailed,
+                blurDetectionEnabled = viewModel.isBlurDetectionEnabled,
+                onBlurChanged = viewModel::onBlurChanged,
             )
         } else {
             PermissionDeniedContent(
@@ -131,18 +135,28 @@ private fun CameraContent(
     onCaptureStarted: () -> Unit,
     onCaptured: (CapturedFrame, NormalizedRect) -> Unit,
     onCaptureFailed: () -> Unit,
+    blurDetectionEnabled: Boolean,
+    onBlurChanged: (Boolean) -> Unit,
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val controller = remember {
         LifecycleCameraController(context).apply {
-            setEnabledUseCases(CameraController.IMAGE_CAPTURE)
+            val analysis = if (blurDetectionEnabled) CameraController.IMAGE_ANALYSIS else 0
+            setEnabledUseCases(CameraController.IMAGE_CAPTURE or analysis)
             cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
         }
     }
+    val blurAnalyzer = remember { BlurAnalyzer(onBlurChanged) }
     DisposableEffect(lifecycleOwner) {
+        val executor = Executors.newSingleThreadExecutor()
+        if (blurDetectionEnabled) controller.setImageAnalysisAnalyzer(executor, blurAnalyzer)
         controller.bindToLifecycle(lifecycleOwner)
-        onDispose { controller.unbind() }
+        onDispose {
+            controller.clearImageAnalysisAnalyzer()
+            controller.unbind()
+            executor.shutdown()
+        }
     }
     LaunchedEffect(state.isFlashOn) {
         controller.imageCaptureFlashMode =
@@ -150,6 +164,7 @@ private fun CameraContent(
     }
     var previewBounds by remember { mutableStateOf(Rect.Zero) }
     var frameBounds by remember { mutableStateOf(Rect.Zero) }
+    LaunchedEffect(frameBounds, previewBounds) { blurAnalyzer.guide.set(guideFraction(frameBounds, previewBounds)) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         AndroidView(
@@ -164,7 +179,11 @@ private fun CameraContent(
         Column(modifier = Modifier.fillMaxSize()) {
             CameraTopRow(onClose = onClose) { FlashButton(state.isFlashOn, onToggleFlash) }
             AimArea(
-                captureFailed = state.captureFailed,
+                bannerMessage = when {
+                    state.captureFailed -> stringResource(R.string.camera_capture_failed)
+                    state.isBlurry -> stringResource(R.string.camera_blur_warning)
+                    else -> null
+                },
                 onFramePositioned = { frameBounds = it },
                 modifier = Modifier.weight(1f),
             )
@@ -221,7 +240,7 @@ private fun FlashButton(isFlashOn: Boolean, onToggleFlash: () -> Unit) {
 
 @Composable
 private fun AimArea(
-    captureFailed: Boolean,
+    bannerMessage: String?,
     onFramePositioned: (Rect) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -243,18 +262,22 @@ private fun AimArea(
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth(),
         )
-        if (captureFailed) CameraBanner(stringResource(R.string.camera_capture_failed))
+        // The banner slot is always laid out so the frame does not jump when it appears.
+        CameraBanner(
+            message = bannerMessage ?: stringResource(R.string.camera_blur_warning),
+            modifier = Modifier.alpha(if (bannerMessage != null) 1f else 0f),
+        )
     }
 }
 
-/** Figma "Peringatan Buram" banner style; the blur warning itself arrives in Sprint 2. */
+/** Figma "Peringatan Buram" banner. */
 @Composable
-private fun CameraBanner(message: String) {
+private fun CameraBanner(message: String, modifier: Modifier = Modifier) {
     Text(
         text = message,
         style = MaterialTheme.typography.labelMedium.copy(lineHeight = 18.sp),
         color = ExpiraColors.Warning,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .background(ExpiraColors.WarningBg, RoundedCornerShape(12.dp))
             .padding(horizontal = 14.dp, vertical = 10.dp),

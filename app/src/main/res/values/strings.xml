@@ -24,6 +24,7 @@
     <string name="camera_flash_off">Lampu kilat mati</string>
     <string name="camera_flash_on">Lampu kilat menyala</string>
     <string name="camera_gallery">Pilih dari galeri</string>
+    <string name="camera_blur_warning">Gambar terlihat buram. Tahan ponsel lebih stabil.</string>
     <string name="camera_capture_failed">Foto gagal diambil. Coba lagi.</string>
     <string name="camera_permission_message">Izin kamera diperlukan untuk memotret tanggal kedaluwarsa. Anda tetap bisa memilih foto dari galeri.</string>
     <string name="camera_permission_grant">Izinkan Kamera</string>

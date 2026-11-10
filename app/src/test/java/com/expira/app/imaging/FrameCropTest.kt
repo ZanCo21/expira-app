@@ -31,6 +31,47 @@ class FrameCropTest {
         assertEquals(1, rect.height)
     }
 
+    // Upright frame: a wide box in the upper-left area of the screen.
+    private val upright = NormalizedRect(0.1f, 0.2f, 0.7f, 0.4f)
+
+    @Test
+    fun `no rotation keeps the rect`() {
+        assertEquals(upright, FrameCrop.toBufferOrientation(upright, 0))
+    }
+
+    @Test
+    fun `90 degrees maps upright rect into the sensor buffer`() {
+        // Buffer is rotated 90 clockwise to be upright, so upright top-left lies at buffer bottom-left.
+        assertRectEquals(NormalizedRect(0.2f, 0.3f, 0.4f, 0.9f), FrameCrop.toBufferOrientation(upright, 90))
+    }
+
+    @Test
+    fun `180 degrees mirrors both axes`() {
+        assertRectEquals(NormalizedRect(0.3f, 0.6f, 0.9f, 0.8f), FrameCrop.toBufferOrientation(upright, 180))
+    }
+
+    @Test
+    fun `270 degrees maps upright rect into the sensor buffer`() {
+        assertRectEquals(NormalizedRect(0.6f, 0.1f, 0.8f, 0.7f), FrameCrop.toBufferOrientation(upright, 270))
+    }
+
+    @Test
+    fun `rotating back and forth returns the original rect`() {
+        listOf(0, 90, 180, 270).forEach { degrees ->
+            val buffer = FrameCrop.toBufferOrientation(upright, degrees)
+            val back = FrameCrop.toBufferOrientation(buffer, (360 - degrees) % 360)
+            assertRectEquals(upright, back)
+        }
+    }
+
+    private fun assertRectEquals(expected: NormalizedRect, actual: NormalizedRect) {
+        val delta = 1e-5f
+        assertEquals(expected.left, actual.left, delta)
+        assertEquals(expected.top, actual.top, delta)
+        assertEquals(expected.right, actual.right, delta)
+        assertEquals(expected.bottom, actual.bottom, delta)
+    }
+
     @Test(expected = IllegalArgumentException::class)
     fun `rejects an empty image`() {
         FrameCrop.toPixels(NormalizedRect(0.1f, 0.1f, 0.9f, 0.9f), 0, 100)

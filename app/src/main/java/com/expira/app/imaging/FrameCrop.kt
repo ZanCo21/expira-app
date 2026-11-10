@@ -25,6 +25,21 @@ data class PixelRect(val left: Int, val top: Int, val right: Int, val bottom: In
 object FrameCrop {
     const val DEFAULT_MARGIN = 0.08f
 
+    /**
+     * Converts a rect given in upright (on-screen) fractions into fractions of the
+     * unrotated sensor buffer, where [rotationDegrees] is the clockwise rotation that
+     * makes the buffer upright.
+     */
+    fun toBufferOrientation(upright: NormalizedRect, rotationDegrees: Int): NormalizedRect = with(upright) {
+        when (((rotationDegrees % 360) + 360) % 360) {
+            0 -> this
+            90 -> NormalizedRect(left = top, top = 1f - right, right = bottom, bottom = 1f - left)
+            180 -> NormalizedRect(left = 1f - right, top = 1f - bottom, right = 1f - left, bottom = 1f - top)
+            270 -> NormalizedRect(left = 1f - bottom, top = left, right = 1f - top, bottom = right)
+            else -> throw IllegalArgumentException("Rotation must be a multiple of 90: $rotationDegrees")
+        }
+    }
+
     fun toPixels(
         frame: NormalizedRect,
         imageWidth: Int,
