@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.material3.Text
+import com.expira.app.ui.navigation.ExpiraNavHost
 import com.expira.app.ui.theme.ExpiraTheme
 
 class MainActivity : ComponentActivity() {
@@ -13,7 +13,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ExpiraTheme {
-                Text(text = getString(R.string.app_name))
+                ExpiraNavHost()
             }
         }
     }

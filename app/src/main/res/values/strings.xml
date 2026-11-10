@@ -1,4 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Expira</string>
+
+    <!-- Common -->
+    <string name="action_back">Kembali</string>
+
+    <!-- Bottom navigation -->
+    <string name="tab_scan">Pindai</string>
+    <string name="tab_history">Riwayat</string>
+    <string name="tab_evaluation">Evaluasi</string>
+
+    <!-- Beranda -->
+    <string name="home_title">Cek Kedaluwarsa</string>
+    <string name="home_subtitle">Foto tanggal pada kemasan, lalu aplikasi membacanya untuk Anda.</string>
+    <string name="home_scan_title">Pindai tanggal kedaluwarsa</string>
+    <string name="home_scan_body">Arahkan kamera ke cetakan tanggal. Semua proses berjalan di ponsel, tanpa internet.</string>
+    <string name="home_take_photo">Ambil Foto</string>
+    <string name="home_pick_gallery">Pilih dari Galeri</string>
+
+    <!-- Riwayat -->
+    <string name="history_title">Riwayat</string>
+
+    <!-- Mode Evaluasi -->
+    <string name="evaluation_title">Mode Evaluasi</string>
+    <string name="evaluation_subtitle">Untuk pengujian penelitian: bandingkan hasil OCR pada tiap konfigurasi.</string>
 </resources>
