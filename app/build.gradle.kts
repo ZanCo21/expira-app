@@ -58,6 +58,9 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.exifinterface)
 
+    // Bundled on-device model: works fully offline, no model download.
+    implementation(libs.mlkit.text.recognition)
+
     debugImplementation(libs.androidx.compose.ui.tooling)
 
     testImplementation(libs.junit)
