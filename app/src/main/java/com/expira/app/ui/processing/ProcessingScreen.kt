@@ -17,6 +17,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,18 +25,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.expira.app.BuildConfig
 import com.expira.app.R
 import com.expira.app.domain.ScanFailure
-import com.expira.app.domain.ScanOutcome
 import com.expira.app.domain.ScanStage
+import com.expira.app.extraction.ConfidenceLevel
 import com.expira.app.ui.components.ExpiraTopBar
 import com.expira.app.ui.components.StepIndicator
 import com.expira.app.ui.components.StepRow
@@ -46,9 +45,12 @@ private val CardShape = RoundedCornerShape(16.dp)
 @Composable
 fun ProcessingRoute(
     onBack: () -> Unit,
+    onFinished: (ConfidenceLevel) -> Unit,
     viewModel: ProcessingViewModel = viewModel(factory = ProcessingViewModel.Factory),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val level = state.outcome?.assessment?.level
+    LaunchedEffect(level) { level?.let(onFinished) }
     ProcessingScreen(state = state, onBack = onBack)
 }
 
@@ -79,7 +81,6 @@ fun ProcessingScreen(
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth(),
             )
-            if (BuildConfig.DEBUG) state.outcome?.let { DebugOutcomeCard(it) }
         }
     }
 }
@@ -166,35 +167,4 @@ private fun FailureText(failure: ScanFailure) {
         textAlign = TextAlign.Center,
         modifier = Modifier.fillMaxWidth(),
     )
-}
-
-/** Temporary debug-only view of the pipeline result; replaced by the result screen in Sprint 3. */
-@Composable
-private fun DebugOutcomeCard(outcome: ScanOutcome) {
-    val best = outcome.extraction.best
-    val variants = outcome.variants.joinToString { variant ->
-        variant.config.name + variant.appliedSteps.joinToString(prefix = "[", postfix = "]")
-    }
-    val summary = buildString {
-        appendLine("Tanggal: ${best?.date?.format() ?: "∅"} (${best?.format ?: "-"}, ${best?.keyword?.kind ?: "-"})")
-        appendLine("Varian: ${outcome.chosen?.config ?: "-"} dari $variants")
-        appendLine("Kandidat: ${outcome.extraction.candidates.joinToString { it.date.format() }.ifEmpty { "∅" }}")
-        appendLine("Blur: ${outcome.blurScore?.let { "%.0f".format(it) } ?: "-"} · Total ${outcome.totalMs} ms")
-        append(outcome.rawText.ifBlank { "∅" })
-    }
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(ExpiraColors.Surface, CardShape)
-            .border(1.dp, ExpiraColors.Outline, CardShape)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(6.dp),
-    ) {
-        Text(text = "DEBUG", style = MaterialTheme.typography.labelMedium, color = ExpiraColors.TextMuted)
-        Text(
-            text = summary,
-            style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
-            color = ExpiraColors.Text,
-        )
-    }
 }

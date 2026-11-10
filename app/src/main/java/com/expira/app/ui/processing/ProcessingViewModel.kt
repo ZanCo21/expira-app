@@ -10,6 +10,9 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.expira.app.ExpiraApplication
 import com.expira.app.domain.ScanDateUseCase
+import com.expira.app.domain.ScanEvent
+import com.expira.app.domain.ScanSession
+import com.expira.app.domain.ScanSessionStore
 import com.expira.app.domain.ScanFailure
 import com.expira.app.imaging.BitmapLoader
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,6 +25,7 @@ class ProcessingViewModel(
     private val imageUri: Uri,
     private val bitmapLoader: BitmapLoader,
     private val scanDate: ScanDateUseCase,
+    private val sessionStore: ScanSessionStore,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProcessingUiState())
@@ -38,7 +42,10 @@ class ProcessingViewModel(
             return
         }
         _uiState.update { it.copy(preview = bitmap) }
-        scanDate(bitmap).collect { event -> _uiState.update { it.reduce(event) } }
+        scanDate(bitmap).collect { event ->
+            if (event is ScanEvent.Completed) sessionStore.start(ScanSession(bitmap, event.outcome))
+            _uiState.update { it.reduce(event) }
+        }
     }
 
     companion object {
@@ -48,7 +55,12 @@ class ProcessingViewModel(
             initializer {
                 val app = this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as ExpiraApplication
                 val uri = checkNotNull(createSavedStateHandle().get<String>(ARG_IMAGE_URI)).toUri()
-                ProcessingViewModel(uri, app.container.bitmapLoader, app.container.scanDateUseCase)
+                ProcessingViewModel(
+                    uri,
+                    app.container.bitmapLoader,
+                    app.container.scanDateUseCase,
+                    app.container.scanSessionStore,
+                )
             }
         }
     }

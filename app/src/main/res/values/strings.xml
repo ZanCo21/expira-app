@@ -68,6 +68,47 @@
     <string name="stage_extract">Mengekstrak tanggal</string>
     <string name="stage_validate">Validasi hasil</string>
 
+    <!-- Hasil / Konfirmasi / Gagal -->
+    <string name="result_title">Hasil Pembacaan</string>
+    <string name="result_expiry_label">Tanggal kedaluwarsa</string>
+    <string name="result_read_line">Terbaca: %1$s · %2$s</string>
+    <string name="result_save">Simpan ke Riwayat</string>
+    <string name="result_correct">Koreksi Tanggal</string>
+    <string name="confirm_title">Konfirmasi Hasil</string>
+    <string name="confirm_banner">Hasil kurang pasti. Mohon periksa tanggal berikut sebelum disimpan.</string>
+    <string name="confirm_read_label">Tanggal terbaca</string>
+    <string name="confirm_raw">Mentah: %1$s</string>
+    <string name="confirm_raw_corrected">Mentah: %1$s → %2$s</string>
+    <string name="confirm_correction">huruf %1$s dikoreksi menjadi %2$s</string>
+    <string name="confirm_needs_check">Perlu konfirmasi</string>
+    <string name="confirm_other_candidates">Kandidat tanggal lain</string>
+    <string name="confirm_manual_option_one">Bukan tanggal ini, isi manual</string>
+    <string name="confirm_manual_option_two">Bukan keduanya, isi manual</string>
+    <string name="confirm_manual_option_many">Bukan semuanya, isi manual</string>
+    <string name="confirm_accept">Ya, Tanggal Sudah Benar</string>
+    <string name="confirm_manual">Koreksi Manual</string>
+    <string name="failed_title">Tanggal belum terbaca</string>
+    <string name="failed_body">Keyakinan terlalu rendah, sehingga hasil tidak ditampilkan. Coba langkah berikut lalu ambil foto ulang.</string>
+    <string name="failed_tip_light">Tambah cahaya dan hindari pantulan kilap</string>
+    <string name="failed_tip_closer">Dekatkan kamera sampai tulisan terlihat jelas</string>
+    <string name="failed_tip_steady">Tahan ponsel stabil agar tidak buram</string>
+    <string name="failed_retake">Foto Ulang</string>
+    <string name="failed_manual">Input Manual</string>
+
+    <!-- Koreksi Manual -->
+    <string name="correction_title">Koreksi Tanggal</string>
+    <string name="correction_intro">Masukkan tanggal kedaluwarsa sesuai yang tertera pada kemasan.</string>
+    <string name="correction_ocr_label">Hasil OCR:</string>
+    <string name="correction_ocr_empty">–</string>
+    <string name="correction_day">Hari</string>
+    <string name="correction_month">Bulan</string>
+    <string name="correction_year">Tahun</string>
+    <string name="correction_hint">Format DD-MM-YYYY. Tanggal tidak valid akan ditolak.</string>
+    <string name="correction_error_invalid">Tanggal tidak valid. Periksa hari dan bulan.</string>
+    <string name="correction_error_range">Tahun harus antara %1$d dan %2$d.</string>
+    <string name="correction_preview">Pratinjau</string>
+    <string name="correction_save">Simpan Koreksi</string>
+
     <!-- Riwayat -->
     <string name="history_title">Riwayat</string>
 

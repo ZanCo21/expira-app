@@ -15,7 +15,7 @@ sealed interface StageStatus {
 data class ProcessingUiState(
     val preview: Bitmap? = null,
     val stages: Map<ScanStage, StageStatus> = ScanStage.entries.associateWith { StageStatus.Pending },
-    /** Pipeline result once finished; shown in a debug-only card until the result screen (Sprint 3). */
+    /** Pipeline result once finished; its confidence level picks the next screen. */
     val outcome: ScanOutcome? = null,
     val failure: ScanFailure? = null,
 ) {

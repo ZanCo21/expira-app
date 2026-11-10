@@ -15,14 +15,20 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.expira.app.extraction.ConfidenceLevel
 import com.expira.app.ui.camera.CameraRoute
 import com.expira.app.ui.components.BottomTab
 import com.expira.app.ui.components.ExpiraBottomNav
+import com.expira.app.ui.correction.CorrectionRoute
+import com.expira.app.ui.correction.CorrectionViewModel
 import com.expira.app.ui.evaluation.EvaluationScreen
 import com.expira.app.ui.history.HistoryScreen
 import com.expira.app.ui.home.HomeScreen
 import com.expira.app.ui.processing.ProcessingRoute
 import com.expira.app.ui.processing.ProcessingViewModel
+import com.expira.app.ui.review.ConfirmRoute
+import com.expira.app.ui.review.FailedScreen
+import com.expira.app.ui.review.ResultRoute
 import com.expira.app.ui.theme.ExpiraColors
 
 object Routes {
@@ -30,6 +36,12 @@ object Routes {
     const val HISTORY = "history"
     const val EVALUATION = "evaluation"
     const val CAMERA = "camera"
+    const val RESULT = "result"
+    const val CONFIRM = "confirm"
+    const val FAILED = "failed"
+    const val CORRECTION = "correction?${CorrectionViewModel.ARG_PREFILL}={${CorrectionViewModel.ARG_PREFILL}}"
+
+    fun correction(prefill: Boolean): String = "correction?${CorrectionViewModel.ARG_PREFILL}=$prefill"
     const val PROCESSING = "processing?${ProcessingViewModel.ARG_IMAGE_URI}={${ProcessingViewModel.ARG_IMAGE_URI}}"
 
     fun processing(imageUri: Uri): String = "processing?${ProcessingViewModel.ARG_IMAGE_URI}=${Uri.encode(imageUri.toString())}"
@@ -75,7 +87,54 @@ fun ExpiraNavHost(navController: NavHostController = rememberNavController()) {
                 route = Routes.PROCESSING,
                 arguments = listOf(navArgument(ProcessingViewModel.ARG_IMAGE_URI) { type = NavType.StringType }),
             ) {
-                ProcessingRoute(onBack = { navController.popBackStack() })
+                ProcessingRoute(
+                    onBack = { navController.popBackStack() },
+                    onFinished = { level ->
+                        val next = when (level) {
+                            ConfidenceLevel.HIGH -> Routes.RESULT
+                            ConfidenceLevel.MEDIUM -> Routes.CONFIRM
+                            ConfidenceLevel.LOW -> Routes.FAILED
+                        }
+                        navController.navigate(next) { popUpTo(Routes.PROCESSING) { inclusive = true } }
+                    },
+                )
+            }
+            composable(Routes.RESULT) {
+                ResultRoute(
+                    onBack = { navController.popBackStack() },
+                    onCorrect = { navController.navigate(Routes.correction(prefill = true)) },
+                    onSaved = navController::backToHome,
+                )
+            }
+            composable(Routes.CONFIRM) {
+                ConfirmRoute(
+                    onBack = { navController.popBackStack() },
+                    onManualInput = { prefill -> navController.navigate(Routes.correction(prefill)) },
+                    onSaved = navController::backToHome,
+                )
+            }
+            composable(Routes.FAILED) {
+                FailedScreen(
+                    onBack = { navController.popBackStack() },
+                    onRetake = {
+                        navController.navigate(Routes.CAMERA) { popUpTo(Routes.HOME) }
+                    },
+                    onManualInput = { navController.navigate(Routes.correction(prefill = false)) },
+                )
+            }
+            composable(
+                route = Routes.CORRECTION,
+                arguments = listOf(
+                    navArgument(CorrectionViewModel.ARG_PREFILL) {
+                        type = NavType.BoolType
+                        defaultValue = false
+                    },
+                ),
+            ) {
+                CorrectionRoute(
+                    onBack = { navController.popBackStack() },
+                    onSaved = navController::backToHome,
+                )
             }
         }
         if (currentTab != null) {
@@ -85,6 +144,11 @@ fun ExpiraNavHost(navController: NavHostController = rememberNavController()) {
             )
         }
     }
+}
+
+/** After saving, return to Beranda where the new entry shows under "Pemindaian terakhir". */
+private fun NavHostController.backToHome() {
+    popBackStack(Routes.HOME, inclusive = false)
 }
 
 private fun NavHostController.navigateToTab(route: String) {
