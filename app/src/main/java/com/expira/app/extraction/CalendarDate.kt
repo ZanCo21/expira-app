@@ -19,6 +19,8 @@ class CalendarDate private constructor(val day: Int, val month: Int, val year: I
 
     fun daysUntil(other: CalendarDate): Long = other.toEpochDay() - toEpochDay()
 
+    fun plusDays(days: Long): CalendarDate = fromEpochDay(toEpochDay() + days)
+
     override fun compareTo(other: CalendarDate): Int = compareValuesBy(this, other, { it.year }, { it.month }, { it.day })
 
     override fun equals(other: Any?): Boolean =
@@ -35,6 +37,26 @@ class CalendarDate private constructor(val day: Int, val month: Int, val year: I
             if (day !in 1..daysInMonth(month, year)) return null
             return CalendarDate(day, month, year)
         }
+
+        /** Inverse of [toEpochDay]. */
+        fun fromEpochDay(epochDay: Long): CalendarDate {
+            require(epochDay >= 0) { "Date before 0001-01-01: $epochDay" }
+            var year = (epochDay / DAYS_PER_YEAR_APPROX).toInt() + 1
+            while (startOfYear(year + 1) <= epochDay) year++
+            while (startOfYear(year) > epochDay) year--
+            var remaining = epochDay - startOfYear(year)
+            var month = 1
+            while (remaining >= daysInMonth(month, year)) {
+                remaining -= daysInMonth(month, year)
+                month++
+            }
+            return CalendarDate(remaining.toInt() + 1, month, year)
+        }
+
+        private const val DAYS_PER_YEAR_APPROX = 365.2425
+
+        /** 1 January always exists, so the private constructor is safe here. */
+        private fun startOfYear(year: Int): Long = CalendarDate(1, 1, year).toEpochDay()
 
         /** Last day of the month: used for month-only dates such as "AUG 2027". */
         fun endOfMonth(month: Int, year: Int): CalendarDate? =

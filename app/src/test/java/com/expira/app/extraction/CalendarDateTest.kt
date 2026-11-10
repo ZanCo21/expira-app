@@ -51,6 +51,25 @@ class CalendarDateTest {
     }
 
     @Test
+    fun `epoch day round trips for every day across several years`() {
+        var date = checkNotNull(CalendarDate.of(1, 1, 1999))
+        val end = checkNotNull(CalendarDate.of(31, 12, 2032))
+        while (date <= end) {
+            assertEquals(date, CalendarDate.fromEpochDay(date.toEpochDay()))
+            date = date.plusDays(1)
+        }
+        assertEquals(CalendarDate.of(1, 1, 1), CalendarDate.fromEpochDay(0))
+    }
+
+    @Test
+    fun `plus days crosses month, leap day and year`() {
+        val base = checkNotNull(CalendarDate.of(28, 2, 2028))
+        assertEquals("29-02-2028", base.plusDays(1).format())
+        assertEquals("01-03-2028", base.plusDays(2).format())
+        assertEquals("31-12-2027", checkNotNull(CalendarDate.of(1, 1, 2028)).plusDays(-1).format())
+    }
+
+    @Test
     fun `days between dates`() {
         val today = checkNotNull(CalendarDate.of(10, 11, 2026))
         assertEquals(275L, today.daysUntil(checkNotNull(CalendarDate.of(12, 8, 2027))))
