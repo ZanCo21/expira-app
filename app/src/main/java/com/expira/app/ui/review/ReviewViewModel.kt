@@ -9,6 +9,10 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.expira.app.ExpiraApplication
 import com.expira.app.domain.ExpiryInfo
 import com.expira.app.domain.ExpiryStatusCalculator
+import com.expira.app.domain.ReminderChoice
+import com.expira.app.domain.ReminderOption
+import com.expira.app.domain.ReminderPlan
+import com.expira.app.domain.ReminderPlanner
 import com.expira.app.domain.SaveScanUseCase
 import com.expira.app.domain.ScanOutcome
 import com.expira.app.domain.ScanSessionStore
@@ -44,6 +48,10 @@ data class ReviewUiState(
     val selected: Int = 0,
     val isSaving: Boolean = false,
     val event: ReviewEvent? = null,
+    /** F-14 */
+    val productName: String = "",
+    /** F-13: applied when the entry is saved; null means no reminder. */
+    val reminder: ReminderChoice? = null,
 ) {
     val isManualSelected: Boolean get() = selected == options.size
 }
@@ -52,7 +60,7 @@ data class ReviewUiState(
 class ReviewViewModel(
     private val sessionStore: ScanSessionStore,
     private val saveScan: SaveScanUseCase,
-    todayProvider: TodayProvider,
+    private val todayProvider: TodayProvider,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(initialState(todayProvider.today()))
@@ -71,7 +79,28 @@ class ReviewViewModel(
             score = outcome.assessment.score,
             expiry = best?.let { ExpiryStatusCalculator.of(it.date, today) },
             options = outcome.extraction.candidates.map { it.date }.distinct().take(MAX_OPTIONS),
+            productName = session.productName,
+            reminder = session.reminder,
         )
+    }
+
+    fun onProductNameChange(name: String) {
+        val trimmed = name.take(MAX_NAME_LENGTH)
+        sessionStore.updateProductName(trimmed)
+        _uiState.update { it.copy(productName = trimmed) }
+    }
+
+    /** Stores the reminder choice; null (or disabled) removes it. */
+    fun setReminder(choice: ReminderChoice?) {
+        val value = choice?.takeIf { it.enabled }
+        sessionStore.updateReminder(value)
+        _uiState.update { it.copy(reminder = value) }
+    }
+
+    /** Reminder day for [option] relative to the detected date, for the sheet preview. */
+    fun planFor(option: ReminderOption): ReminderPlan? {
+        val date = _uiState.value.detectedDate ?: return null
+        return ReminderPlanner.plan(date, option, todayProvider.today())
     }
 
     fun select(index: Int) = _uiState.update { it.copy(selected = index.coerceIn(0, it.options.size)) }
@@ -110,6 +139,7 @@ class ReviewViewModel(
 
     companion object {
         private const val MAX_OPTIONS = 3
+        private const val MAX_NAME_LENGTH = 60
 
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
