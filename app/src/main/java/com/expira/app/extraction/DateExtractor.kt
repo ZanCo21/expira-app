@@ -33,7 +33,7 @@ class DateExtractor {
         }
         if (candidates.isEmpty()) return ExtractionResult.EMPTY
 
-        val ranked = candidates.sortedWith(rankOrder)
+        val ranked = candidates.sortedWith(CandidateRanking.ORDER)
         val best = ranked.first().takeIf { it.keyword.kind != KeywordKind.PRODUCTION }
         return ExtractionResult(best = best, candidates = ranked)
     }
@@ -131,19 +131,6 @@ class DateExtractor {
                 }
             }
             .let { Regex("""(?<![A-Z])(?:$it)(?![A-Z])""") }
-
-        /** Ranking: expiry keyword > no keyword > production; then closeness, full date, later date. */
-        val rankOrder: Comparator<DateCandidate> = compareBy<DateCandidate> { kindRank(it.keyword.kind) }
-            .thenByDescending { it.keyword.sameLine }
-            .thenByDescending { it.format.hasDay }
-            .thenByDescending { it.date }
-            .thenByDescending { it.ocrConfidence ?: -1f }
-
-        fun kindRank(kind: KeywordKind): Int = when (kind) {
-            KeywordKind.EXPIRY -> 0
-            KeywordKind.NONE -> 1
-            KeywordKind.PRODUCTION -> 2
-        }
 
         fun normalizeKeyword(text: String): String = text.filter { it.isLetter() }
 

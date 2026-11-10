@@ -34,6 +34,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.expira.app.BuildConfig
 import com.expira.app.R
 import com.expira.app.domain.ScanFailure
+import com.expira.app.domain.ScanOutcome
 import com.expira.app.domain.ScanStage
 import com.expira.app.ui.components.ExpiraTopBar
 import com.expira.app.ui.components.StepIndicator
@@ -78,7 +79,7 @@ fun ProcessingScreen(
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth(),
             )
-            if (BuildConfig.DEBUG) state.rawText?.let { RawTextDebugCard(it) }
+            if (BuildConfig.DEBUG) state.outcome?.let { DebugOutcomeCard(it) }
         }
     }
 }
@@ -167,9 +168,20 @@ private fun FailureText(failure: ScanFailure) {
     )
 }
 
-/** Temporary debug-only view of the raw OCR text; replaced by the result screen in Sprint 2. */
+/** Temporary debug-only view of the pipeline result; replaced by the result screen in Sprint 3. */
 @Composable
-private fun RawTextDebugCard(rawText: String) {
+private fun DebugOutcomeCard(outcome: ScanOutcome) {
+    val best = outcome.extraction.best
+    val variants = outcome.variants.joinToString { variant ->
+        variant.config.name + variant.appliedSteps.joinToString(prefix = "[", postfix = "]")
+    }
+    val summary = buildString {
+        appendLine("Tanggal: ${best?.date?.format() ?: "∅"} (${best?.format ?: "-"}, ${best?.keyword?.kind ?: "-"})")
+        appendLine("Varian: ${outcome.chosen?.config ?: "-"} dari $variants")
+        appendLine("Kandidat: ${outcome.extraction.candidates.joinToString { it.date.format() }.ifEmpty { "∅" }}")
+        appendLine("Blur: ${outcome.blurScore?.let { "%.0f".format(it) } ?: "-"} · Total ${outcome.totalMs} ms")
+        append(outcome.rawText.ifBlank { "∅" })
+    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -178,9 +190,9 @@ private fun RawTextDebugCard(rawText: String) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
-        Text(text = "DEBUG · OCR", style = MaterialTheme.typography.labelMedium, color = ExpiraColors.TextMuted)
+        Text(text = "DEBUG", style = MaterialTheme.typography.labelMedium, color = ExpiraColors.TextMuted)
         Text(
-            text = rawText.ifBlank { "∅" },
+            text = summary,
             style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
             color = ExpiraColors.Text,
         )
