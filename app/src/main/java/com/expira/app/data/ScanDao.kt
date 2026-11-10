@@ -14,6 +14,9 @@ interface ScanDao {
     @Query("SELECT * FROM scans ORDER BY created_at DESC, id DESC")
     fun observeAll(): Flow<List<ScanEntity>>
 
+    @Query("SELECT * FROM scans ORDER BY created_at, id")
+    suspend fun getAll(): List<ScanEntity>
+
     @Query("SELECT * FROM scans ORDER BY created_at DESC, id DESC LIMIT :limit")
     fun observeRecent(limit: Int): Flow<List<ScanEntity>>
 }

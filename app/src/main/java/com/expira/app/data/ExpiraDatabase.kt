@@ -1,16 +1,24 @@
 package com.expira.app.data
 
 import android.content.Context
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [ScanEntity::class], version = 1, exportSchema = true)
+@Database(
+    entities = [ScanEntity::class, EvaluationLogEntity::class],
+    version = 2,
+    exportSchema = true,
+    autoMigrations = [AutoMigration(from = 1, to = 2)],
+)
 abstract class ExpiraDatabase : RoomDatabase() {
     abstract fun scanDao(): ScanDao
 
+    abstract fun evaluationDao(): EvaluationDao
+
     companion object {
-        private const val NAME = "expira.db"
+        const val NAME = "expira.db"
 
         fun create(context: Context): ExpiraDatabase =
             Room.databaseBuilder(context, ExpiraDatabase::class.java, NAME).build()

@@ -1,6 +1,7 @@
 package com.expira.app
 
 import android.content.Context
+import com.expira.app.data.EvaluationRepository
 import com.expira.app.data.ExpiraDatabase
 import com.expira.app.data.ScanHistoryRepository
 import com.expira.app.domain.CorrectDateUseCase
@@ -25,6 +26,7 @@ class AppContainer(context: Context, isOpenCvReady: Boolean) {
 
     private val database: ExpiraDatabase by lazy { ExpiraDatabase.create(context) }
     val historyRepository: ScanHistoryRepository by lazy { ScanHistoryRepository(database.scanDao()) }
+    val evaluationRepository: EvaluationRepository by lazy { EvaluationRepository(database.evaluationDao()) }
     val scanSessionStore = ScanSessionStore()
     val saveScanUseCase: SaveScanUseCase by lazy {
         SaveScanUseCase(historyRepository, File(context.filesDir, HISTORY_IMAGE_DIR))

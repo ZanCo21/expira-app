@@ -1,0 +1,275 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 2,
+    "identityHash": "54d1ef498004b81246de1cc7450ad253",
+    "entities": [
+      {
+        "tableName": "scans",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `expiry_epoch_day` INTEGER NOT NULL, `expiry_day` INTEGER NOT NULL, `expiry_month` INTEGER NOT NULL, `expiry_year` INTEGER NOT NULL, `detected_date` TEXT, `raw_ocr_text` TEXT NOT NULL, `confidence` REAL, `confidence_level` TEXT, `was_corrected` INTEGER NOT NULL, `image_path` TEXT, `preprocess_config` TEXT, `preprocess_ms` INTEGER, `ocr_ms` INTEGER, `extract_ms` INTEGER, `validate_ms` INTEGER, `total_ms` INTEGER, `created_at` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "expiryEpochDay",
+            "columnName": "expiry_epoch_day",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "expiryDay",
+            "columnName": "expiry_day",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "expiryMonth",
+            "columnName": "expiry_month",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "expiryYear",
+            "columnName": "expiry_year",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "detectedDate",
+            "columnName": "detected_date",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "rawOcrText",
+            "columnName": "raw_ocr_text",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "confidence",
+            "columnName": "confidence",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "confidenceLevel",
+            "columnName": "confidence_level",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "wasCorrected",
+            "columnName": "was_corrected",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "imagePath",
+            "columnName": "image_path",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "preprocessConfig",
+            "columnName": "preprocess_config",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "preprocessMs",
+            "columnName": "preprocess_ms",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "ocrMs",
+            "columnName": "ocr_ms",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "extractMs",
+            "columnName": "extract_ms",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "validateMs",
+            "columnName": "validate_ms",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "totalMs",
+            "columnName": "total_ms",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "created_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "evaluation_logs",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `run_id` INTEGER NOT NULL, `image_name` TEXT NOT NULL, `config` TEXT NOT NULL, `ground_truth` TEXT NOT NULL, `extracted_date` TEXT, `extraction_success` INTEGER NOT NULL, `exact_match` INTEGER NOT NULL, `day_match` INTEGER NOT NULL, `month_match` INTEGER NOT NULL, `year_match` INTEGER NOT NULL, `cer` REAL NOT NULL, `confidence` REAL, `confidence_level` TEXT NOT NULL, `applied_steps` TEXT NOT NULL, `blur_score` REAL, `raw_ocr_text` TEXT NOT NULL, `preprocess_ms` INTEGER NOT NULL, `ocr_ms` INTEGER NOT NULL, `extract_validate_ms` INTEGER NOT NULL, `total_ms` INTEGER NOT NULL, `created_at` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "runId",
+            "columnName": "run_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "imageName",
+            "columnName": "image_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "config",
+            "columnName": "config",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "groundTruth",
+            "columnName": "ground_truth",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "extractedDate",
+            "columnName": "extracted_date",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "extractionSuccess",
+            "columnName": "extraction_success",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "exactMatch",
+            "columnName": "exact_match",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dayMatch",
+            "columnName": "day_match",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "monthMatch",
+            "columnName": "month_match",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "yearMatch",
+            "columnName": "year_match",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "cer",
+            "columnName": "cer",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "confidence",
+            "columnName": "confidence",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "confidenceLevel",
+            "columnName": "confidence_level",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "appliedSteps",
+            "columnName": "applied_steps",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "blurScore",
+            "columnName": "blur_score",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "rawOcrText",
+            "columnName": "raw_ocr_text",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "preprocessMs",
+            "columnName": "preprocess_ms",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ocrMs",
+            "columnName": "ocr_ms",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "extractValidateMs",
+            "columnName": "extract_validate_ms",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "totalMs",
+            "columnName": "total_ms",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "created_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_evaluation_logs_run_id",
+            "unique": false,
+            "columnNames": [
+              "run_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_evaluation_logs_run_id` ON `${TABLE_NAME}` (`run_id`)"
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '54d1ef498004b81246de1cc7450ad253')"
+    ]
+  }
+}

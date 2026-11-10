@@ -17,6 +17,8 @@ class ScanHistoryRepository(private val dao: ScanDao) {
         dao.observeRecent(limit).map { list -> list.mapNotNull { it.toRecord() } }
 
     suspend fun save(record: ScanRecord): Long = dao.insert(record.toEntity())
+
+    suspend fun getAll(): List<ScanRecord> = dao.getAll().mapNotNull { it.toRecord() }
 }
 
 private fun ScanRecord.toEntity() = ScanEntity(
@@ -46,7 +48,7 @@ private fun ScanEntity.toRecord(): ScanRecord? {
     return ScanRecord(
         id = id,
         expiry = expiry,
-        detectedDate = detectedDate?.let(::parseDate),
+        detectedDate = detectedDate?.let(::parseStoredDate),
         rawOcrText = rawOcrText,
         confidence = confidence,
         confidenceLevel = confidenceLevel?.let { runCatching { ConfidenceLevel.valueOf(it) }.getOrNull() },
@@ -63,7 +65,7 @@ private fun ScanEntity.toRecord(): ScanRecord? {
 }
 
 /** Parses the DD-MM-YYYY format written by [CalendarDate.format]. */
-private fun parseDate(text: String): CalendarDate? {
+internal fun parseStoredDate(text: String): CalendarDate? {
     val parts = text.split("-").mapNotNull { it.toIntOrNull() }
     return if (parts.size == 3) CalendarDate.of(parts[0], parts[1], parts[2]) else null
 }
