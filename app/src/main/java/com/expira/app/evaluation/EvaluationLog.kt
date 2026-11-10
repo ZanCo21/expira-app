@@ -19,6 +19,8 @@ data class EvaluationLog(
     val confidenceLevel: ConfidenceLevel,
     val appliedSteps: Set<ConditionalStep>,
     val blurScore: Double?,
+    /** OCR line the extracted date came from, null when nothing was extracted. */
+    val detectedLine: String?,
     val rawOcrText: String,
     val preprocessMs: Long,
     val ocrMs: Long,

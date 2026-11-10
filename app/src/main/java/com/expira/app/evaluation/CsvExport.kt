@@ -13,7 +13,7 @@ object CsvExport {
         "source", "id", "run_id", "created_at", "image", "config", "ground_truth", "result_date",
         "detected_date", "extraction_success", "exact_match", "day_match", "month_match", "year_match",
         "cer", "confidence", "confidence_level", "was_corrected", "applied_steps", "blur_score",
-        "preprocess_ms", "ocr_ms", "extract_validate_ms", "total_ms", "raw_ocr_text",
+        "preprocess_ms", "ocr_ms", "extract_validate_ms", "total_ms", "detected_line", "raw_ocr_text",
     )
 
     fun build(logs: List<EvaluationLog>, scans: List<ScanRecord>): String = buildString {
@@ -29,7 +29,8 @@ object CsvExport {
         comparison.monthMatch.flag(), comparison.yearMatch.flag(), comparison.cer.decimal(),
         confidence?.decimal().orEmpty(), confidenceLevel.name, "",
         appliedSteps.joinToString("|") { it.name }, blurScore?.decimal().orEmpty(),
-        preprocessMs.toString(), ocrMs.toString(), extractValidateMs.toString(), totalMs.toString(), rawOcrText,
+        preprocessMs.toString(), ocrMs.toString(), extractValidateMs.toString(), totalMs.toString(),
+        detectedLine.orEmpty(), rawOcrText,
     )
 
     private fun ScanRecord.toFields(): List<String> = listOf(
@@ -39,7 +40,7 @@ object CsvExport {
         confidence?.decimal().orEmpty(), confidenceLevel?.name.orEmpty(), wasCorrected.flag(), "", "",
         timings?.preprocessMs?.toString().orEmpty(), timings?.ocrMs?.toString().orEmpty(),
         timings?.let { (it.extractMs + it.validateMs).toString() }.orEmpty(),
-        timings?.totalMs?.toString().orEmpty(), rawOcrText,
+        timings?.totalMs?.toString().orEmpty(), "", rawOcrText,
     )
 
     private fun StringBuilder.appendRow(fields: List<String>) {

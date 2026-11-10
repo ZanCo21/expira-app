@@ -35,6 +35,7 @@ private fun EvaluationLog.toEntity() = EvaluationLogEntity(
     confidenceLevel = confidenceLevel.name,
     appliedSteps = appliedSteps.joinToString("|") { it.name },
     blurScore = blurScore,
+    detectedLine = detectedLine,
     rawOcrText = rawOcrText,
     preprocessMs = preprocessMs,
     ocrMs = ocrMs,
@@ -61,6 +62,7 @@ private fun EvaluationLogEntity.toLog(): EvaluationLog? {
             runCatching { ConditionalStep.valueOf(name) }.getOrNull()
         }.toSet(),
         blurScore = blurScore,
+        detectedLine = detectedLine,
         rawOcrText = rawOcrText,
         preprocessMs = preprocessMs,
         ocrMs = ocrMs,

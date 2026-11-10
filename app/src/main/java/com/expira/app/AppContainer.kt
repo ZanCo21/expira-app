@@ -6,6 +6,8 @@ import com.expira.app.data.ExpiraDatabase
 import com.expira.app.data.ScanHistoryRepository
 import com.expira.app.domain.CorrectDateUseCase
 import com.expira.app.domain.SaveScanUseCase
+import com.expira.app.evaluation.ExportLogsUseCase
+import com.expira.app.evaluation.RunEvaluationUseCase
 import com.expira.app.domain.ScanDateUseCase
 import com.expira.app.domain.ScanSessionStore
 import com.expira.app.imaging.BitmapLoader
@@ -21,6 +23,12 @@ class AppContainer(context: Context, isOpenCvReady: Boolean) {
     val bitmapLoader: BitmapLoader by lazy { ContentBitmapLoader(context.contentResolver) }
     val scanImageStore: ScanImageStore by lazy { ScanImageStore(context.cacheDir) }
     private val ocrEngine: OcrEngine by lazy { MlKitOcrEngine() }
+    val runEvaluationUseCase: RunEvaluationUseCase by lazy {
+        RunEvaluationUseCase(bitmapLoader, scanDateUseCase, ocrEngine, evaluationRepository)
+    }
+    val exportLogsUseCase: ExportLogsUseCase by lazy {
+        ExportLogsUseCase(context.contentResolver, evaluationRepository, historyRepository)
+    }
     private val preprocessor: ImagePreprocessor? = if (isOpenCvReady) ImagePreprocessor() else null
     val scanDateUseCase: ScanDateUseCase by lazy { ScanDateUseCase(ocrEngine, preprocessor) }
 

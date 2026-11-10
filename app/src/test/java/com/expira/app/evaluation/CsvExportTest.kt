@@ -26,6 +26,7 @@ class CsvExportTest {
         confidenceLevel = ConfidenceLevel.HIGH,
         appliedSteps = setOf(ConditionalStep.SHARPEN, ConditionalStep.CLOSING),
         blurScore = 87.5,
+        detectedLine = "EXP 12.08.27",
         rawOcrText = "MFD 12.08.26\nEXP \"12.08.27\"",
         preprocessMs = 120,
         ocrMs = 480,
@@ -62,14 +63,14 @@ class CsvExportTest {
         val csv = CsvExport.build(listOf(log), emptyList())
         assertTrue(csv.contains("\"susu, uht.jpg\""))
         assertTrue(csv.contains("\"MFD 12.08.26\nEXP \"\"12.08.27\"\"\""))
-        assertTrue(csv.contains(",P3,12-08-2027,12-08-2027,12-08-2027,1,1,1,1,1,0.0000,0.9375,HIGH,,SHARPEN|CLOSING,87.5000,120,480,12,612,"))
+        assertTrue(csv.contains(",P3,12-08-2027,12-08-2027,12-08-2027,1,1,1,1,1,0.0000,0.9375,HIGH,,SHARPEN|CLOSING,87.5000,120,480,12,612,EXP 12.08.27,"))
     }
 
     @Test
     fun `scan row records correction and combined extract time`() {
         val line = rows(CsvExport.build(emptyList(), listOf(scan)))[1]
         assertTrue(line.startsWith("scan,7,,2000,,,,12-08-2027,,0,"))
-        assertTrue(line.contains(",LOW,1,,,1,2,7,10,SUSU"))
+        assertTrue(line.contains(",LOW,1,,,1,2,7,10,,SUSU"))
     }
 
     @Test

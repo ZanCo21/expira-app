@@ -25,6 +25,7 @@ data class EvaluationLogEntity(
     /** Conditional P3 steps joined with "|", empty when none ran. */
     @ColumnInfo(name = "applied_steps") val appliedSteps: String,
     @ColumnInfo(name = "blur_score") val blurScore: Double?,
+    @ColumnInfo(name = "detected_line") val detectedLine: String?,
     @ColumnInfo(name = "raw_ocr_text") val rawOcrText: String,
     @ColumnInfo(name = "preprocess_ms") val preprocessMs: Long,
     @ColumnInfo(name = "ocr_ms") val ocrMs: Long,
