@@ -1,6 +1,7 @@
 package com.expira.app.imaging
 
 import android.graphics.Bitmap
+import androidx.core.graphics.createBitmap
 import org.opencv.android.Utils
 import org.opencv.core.Core
 import org.opencv.core.CvType
@@ -66,7 +67,7 @@ class ImagePreprocessor {
         val rgba = Mat()
         try {
             Imgproc.cvtColor(gray, rgba, Imgproc.COLOR_GRAY2RGBA)
-            val bitmap = Bitmap.createBitmap(rgba.cols(), rgba.rows(), Bitmap.Config.ARGB_8888)
+            val bitmap = createBitmap(rgba.cols(), rgba.rows())
             Utils.matToBitmap(rgba, bitmap)
             return PreprocessResult(bitmap, config, applied.toSet())
         } finally {
