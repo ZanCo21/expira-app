@@ -57,6 +57,8 @@ kotlin {
 
 dependencies {
     implementation(libs.androidx.core.ktx)
+    // Same launch screen on API 24-30 as the Android 12+ splash screen.
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
