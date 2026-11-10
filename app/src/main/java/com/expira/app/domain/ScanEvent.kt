@@ -1,5 +1,7 @@
 package com.expira.app.domain
 
+import com.expira.app.extraction.CalendarDate
+import com.expira.app.extraction.ConfidenceAssessment
 import com.expira.app.extraction.ExtractionResult
 import com.expira.app.imaging.ConditionalStep
 import com.expira.app.imaging.PreprocessConfig
@@ -30,15 +32,19 @@ data class VariantResult(
 )
 
 data class ScanOutcome(
+    /** The date the scan ran; validation and status are relative to it. */
+    val scannedOn: CalendarDate,
     /** Variance of Laplacian of the input image, or null when OpenCV is unavailable. */
     val blurScore: Double?,
     /** Variants in the order they ran (later ones may be skipped after a strong result). */
     val variants: List<VariantResult>,
     /** The variant whose candidate was chosen, or null when no variant found a date. */
     val chosen: VariantResult?,
+    val assessment: ConfidenceAssessment,
     val preprocessMs: Long,
     val ocrMs: Long,
     val extractMs: Long,
+    val validateMs: Long,
     val totalMs: Long,
 ) {
     val extraction: ExtractionResult get() = chosen?.extraction ?: ExtractionResult.EMPTY

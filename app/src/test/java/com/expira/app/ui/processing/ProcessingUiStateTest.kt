@@ -5,6 +5,8 @@ import com.expira.app.domain.ScanFailure
 import com.expira.app.domain.ScanOutcome
 import com.expira.app.domain.ScanStage
 import com.expira.app.domain.VariantResult
+import com.expira.app.extraction.CalendarDate
+import com.expira.app.extraction.ConfidenceAssessment
 import com.expira.app.extraction.ExtractionResult
 import com.expira.app.imaging.PreprocessConfig
 import com.expira.app.ocr.OcrResult
@@ -41,7 +43,18 @@ class ProcessingUiStateTest {
             ocr = OcrResult("EXP 12.08.27", emptyList()),
             extraction = ExtractionResult.EMPTY,
         )
-        val outcome = ScanOutcome(null, listOf(variant), null, preprocessMs = 0, ocrMs = 10, extractMs = 1, totalMs = 12)
+        val outcome = ScanOutcome(
+            scannedOn = checkNotNull(CalendarDate.of(10, 11, 2026)),
+            blurScore = null,
+            variants = listOf(variant),
+            chosen = null,
+            assessment = ConfidenceAssessment.NONE,
+            preprocessMs = 0,
+            ocrMs = 10,
+            extractMs = 1,
+            validateMs = 0,
+            totalMs = 12,
+        )
         val state = ProcessingUiState().reduce(ScanEvent.Completed(outcome))
         assertEquals("EXP 12.08.27", state.outcome?.rawText)
         assertNull(state.failure)

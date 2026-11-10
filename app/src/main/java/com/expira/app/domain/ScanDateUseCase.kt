@@ -1,7 +1,9 @@
 package com.expira.app.domain
 
 import android.graphics.Bitmap
+import com.expira.app.extraction.ConfidenceScorer
 import com.expira.app.extraction.DateExtractor
+import com.expira.app.extraction.DateValidator
 import com.expira.app.extraction.TextLine
 import com.expira.app.imaging.BlurDetector
 import com.expira.app.imaging.ConditionalStep
@@ -17,20 +19,23 @@ import kotlinx.coroutines.flow.flowOn
 
 /**
  * Runs the scan pipeline on an upright, downscaled bitmap:
- * preprocessing (all variants) -> OCR + extraction per variant -> best variant.
- * Validation and the confidence score are added in Sprint 3.
+ * preprocessing (all variants) -> OCR + extraction per variant -> best variant
+ * -> validation and confidence score.
  *
  * @param preprocessor null when OpenCV is unavailable; only P0 then runs.
  */
 class ScanDateUseCase(
     private val ocrEngine: OcrEngine,
     private val preprocessor: ImagePreprocessor?,
-    private val extractor: DateExtractor = DateExtractor(),
+    private val todayProvider: TodayProvider = SystemTodayProvider,
     private val clock: () -> Long = { System.nanoTime() / NANOS_PER_MILLI },
 ) {
 
     operator fun invoke(bitmap: Bitmap, strategy: ScanStrategy = ScanStrategy.DEFAULT): Flow<ScanEvent> = flow {
         val start = clock()
+        val today = todayProvider.today()
+        val validator = DateValidator(today)
+        val extractor = DateExtractor(validator)
 
         emit(ScanEvent.StageStarted(ScanStage.PREPROCESS))
         val preprocessStart = clock()
@@ -39,7 +44,7 @@ class ScanDateUseCase(
         emit(ScanEvent.StageFinished(ScanStage.PREPROCESS, clock() - preprocessStart))
 
         emit(ScanEvent.StageStarted(ScanStage.OCR))
-        val variants = runVariants(inputs, stopEarly = strategy is ScanStrategy.MultiVariant)
+        val variants = runVariants(inputs, extractor, stopEarly = strategy is ScanStrategy.MultiVariant)
         inputs.filter { it.bitmap !== bitmap }.forEach { it.bitmap.recycle() }
         if (variants.isEmpty()) {
             emit(ScanEvent.Failed(ScanFailure.OCR_FAILED))
@@ -52,13 +57,23 @@ class ScanDateUseCase(
         emit(ScanEvent.StageStarted(ScanStage.EXTRACT))
         emit(ScanEvent.StageFinished(ScanStage.EXTRACT, extractMs))
 
+        emit(ScanEvent.StageStarted(ScanStage.VALIDATE))
+        val validateStart = clock()
+        val chosen = VariantSelection.choose(variants)
+        val assessment = ConfidenceScorer(validator).assess(chosen?.extraction?.best)
+        val validateMs = clock() - validateStart
+        emit(ScanEvent.StageFinished(ScanStage.VALIDATE, validateMs))
+
         val outcome = ScanOutcome(
+            scannedOn = today,
             blurScore = blurScore,
             variants = variants,
-            chosen = VariantSelection.choose(variants),
+            chosen = chosen,
+            assessment = assessment,
             preprocessMs = inputs.sumOf { it.preprocessMs },
             ocrMs = ocrMs,
             extractMs = extractMs,
+            validateMs = validateMs,
             totalMs = clock() - start,
         )
         emit(ScanEvent.Completed(outcome))
@@ -77,10 +92,14 @@ class ScanDateUseCase(
         }
     }
 
-    private suspend fun runVariants(inputs: List<VariantInput>, stopEarly: Boolean): List<VariantResult> {
+    private suspend fun runVariants(
+        inputs: List<VariantInput>,
+        extractor: DateExtractor,
+        stopEarly: Boolean,
+    ): List<VariantResult> {
         val results = mutableListOf<VariantResult>()
         for (input in inputs) {
-            val variant = runVariant(input) ?: continue
+            val variant = runVariant(input, extractor) ?: continue
             results += variant
             if (stopEarly && VariantSelection.isStrong(variant)) break
         }
@@ -88,7 +107,7 @@ class ScanDateUseCase(
     }
 
     /** Returns null when OCR fails on this variant; other variants may still succeed. */
-    private suspend fun runVariant(input: VariantInput): VariantResult? {
+    private suspend fun runVariant(input: VariantInput, extractor: DateExtractor): VariantResult? {
         val ocrStart = clock()
         val ocr = try {
             ocrEngine.recognize(input.bitmap)
