@@ -38,7 +38,11 @@ class MigrationTest {
         val db = Room.databaseBuilder(context, ExpiraDatabase::class.java, dbName).build()
         try {
             val records = ScanHistoryRepository(db.scanDao()).getAll()
-            assertEquals("12-08-2027", records.single().expiry.format())
+            val record = records.single()
+            assertEquals("12-08-2027", record.expiry.format())
+            // Columns added in v3 (product name, reminder) start empty for old entries.
+            assertEquals(null, record.productName)
+            assertEquals(null, record.reminder)
             assertEquals(emptyList<Any>(), EvaluationRepository(db.evaluationDao()).observeLatestRun().first())
         } finally {
             db.close()

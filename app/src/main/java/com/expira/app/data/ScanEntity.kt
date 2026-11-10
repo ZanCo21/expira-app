@@ -27,4 +27,10 @@ data class ScanEntity(
     @ColumnInfo(name = "validate_ms") val validateMs: Long?,
     @ColumnInfo(name = "total_ms") val totalMs: Long?,
     @ColumnInfo(name = "created_at") val createdAt: Long,
+    /** F-14: optional product name. */
+    @ColumnInfo(name = "product_name") val productName: String? = null,
+    /** F-13: days before expiry (7, 3 or 1), null when no reminder was requested. */
+    @ColumnInfo(name = "reminder_days_before") val reminderDaysBefore: Int? = null,
+    @ColumnInfo(name = "reminder_epoch_day") val reminderEpochDay: Long? = null,
+    @ColumnInfo(name = "reminder_status") val reminderStatus: String? = null,
 )

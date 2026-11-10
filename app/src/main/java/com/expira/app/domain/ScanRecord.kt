@@ -18,6 +18,8 @@ data class ScanRecord(
     val preprocessConfig: PreprocessConfig?,
     val timings: ScanTimings?,
     val createdAt: Long,
+    val productName: String? = null,
+    val reminder: ReminderInfo? = null,
 )
 
 data class ScanTimings(
