@@ -1,0 +1,123 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "d5d2cf1fbd048e9465d9325e9eb850a6",
+    "entities": [
+      {
+        "tableName": "scans",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `expiry_epoch_day` INTEGER NOT NULL, `expiry_day` INTEGER NOT NULL, `expiry_month` INTEGER NOT NULL, `expiry_year` INTEGER NOT NULL, `detected_date` TEXT, `raw_ocr_text` TEXT NOT NULL, `confidence` REAL, `confidence_level` TEXT, `was_corrected` INTEGER NOT NULL, `image_path` TEXT, `preprocess_config` TEXT, `preprocess_ms` INTEGER, `ocr_ms` INTEGER, `extract_ms` INTEGER, `validate_ms` INTEGER, `total_ms` INTEGER, `created_at` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "expiryEpochDay",
+            "columnName": "expiry_epoch_day",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "expiryDay",
+            "columnName": "expiry_day",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "expiryMonth",
+            "columnName": "expiry_month",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "expiryYear",
+            "columnName": "expiry_year",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "detectedDate",
+            "columnName": "detected_date",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "rawOcrText",
+            "columnName": "raw_ocr_text",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "confidence",
+            "columnName": "confidence",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "confidenceLevel",
+            "columnName": "confidence_level",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "wasCorrected",
+            "columnName": "was_corrected",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "imagePath",
+            "columnName": "image_path",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "preprocessConfig",
+            "columnName": "preprocess_config",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "preprocessMs",
+            "columnName": "preprocess_ms",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "ocrMs",
+            "columnName": "ocr_ms",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "extractMs",
+            "columnName": "extract_ms",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "validateMs",
+            "columnName": "validate_ms",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "totalMs",
+            "columnName": "total_ms",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "created_at",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd5d2cf1fbd048e9465d9325e9eb850a6')"
+    ]
+  }
+}
