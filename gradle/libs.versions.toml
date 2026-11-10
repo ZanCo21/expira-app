@@ -11,6 +11,9 @@ junit = "4.13.2"
 mlkitTextRecognition = "16.0.1"
 exifinterface = "1.4.1"
 camerax = "1.4.2"
+opencv = "4.10.0"
+androidxTestExtJunit = "1.2.1"
+androidxTestRunner = "1.6.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -30,6 +33,9 @@ androidx-exifinterface = { group = "androidx.exifinterface", name = "exifinterfa
 androidx-camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "camerax" }
 androidx-camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camerax" }
 androidx-camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "camerax" }
+opencv = { group = "org.opencv", name = "opencv", version.ref = "opencv" }
+androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxTestExtJunit" }
+androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidxTestRunner" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 
 [plugins]

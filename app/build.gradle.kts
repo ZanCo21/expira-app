@@ -64,7 +64,13 @@ dependencies {
     // Bundled on-device model: works fully offline, no model download.
     implementation(libs.mlkit.text.recognition)
 
+    // Official OpenCV Android AAR (Maven Central) for image preprocessing.
+    implementation(libs.opencv)
+
     debugImplementation(libs.androidx.compose.ui.tooling)
 
     testImplementation(libs.junit)
+
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.runner)
 }
