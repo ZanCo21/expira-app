@@ -67,6 +67,7 @@ import com.expira.app.imaging.CapturedFrame
 import com.expira.app.imaging.NormalizedRect
 import com.expira.app.ui.components.PrimaryButton
 import com.expira.app.ui.components.SecondaryButton
+import com.expira.app.ui.components.WarningBanner
 import com.expira.app.ui.theme.ExpiraColors
 import java.util.concurrent.Executors
 
@@ -263,25 +264,12 @@ private fun AimArea(
             modifier = Modifier.fillMaxWidth(),
         )
         // The banner slot is always laid out so the frame does not jump when it appears.
-        CameraBanner(
+        WarningBanner(
             message = bannerMessage ?: stringResource(R.string.camera_blur_warning),
+            verticalPadding = 10.dp,
             modifier = Modifier.alpha(if (bannerMessage != null) 1f else 0f),
         )
     }
-}
-
-/** Figma "Peringatan Buram" banner. */
-@Composable
-private fun CameraBanner(message: String, modifier: Modifier = Modifier) {
-    Text(
-        text = message,
-        style = MaterialTheme.typography.labelMedium.copy(lineHeight = 18.sp),
-        color = ExpiraColors.Warning,
-        modifier = modifier
-            .fillMaxWidth()
-            .background(ExpiraColors.WarningBg, RoundedCornerShape(12.dp))
-            .padding(horizontal = 14.dp, vertical = 10.dp),
-    )
 }
 
 @Composable
