@@ -3,13 +3,18 @@ package com.expira.app
 import android.content.Context
 import com.expira.app.data.EvaluationRepository
 import com.expira.app.data.ExpiraDatabase
+import com.expira.app.data.ReminderNotifier
+import com.expira.app.data.ReminderScheduler
+import com.expira.app.data.WorkManagerReminderScheduler
 import com.expira.app.data.ScanHistoryRepository
 import com.expira.app.domain.CorrectDateUseCase
+import com.expira.app.domain.DeleteScanUseCase
 import com.expira.app.domain.SaveScanUseCase
 import com.expira.app.evaluation.ExportLogsUseCase
 import com.expira.app.evaluation.RunEvaluationUseCase
 import com.expira.app.domain.ScanDateUseCase
 import com.expira.app.domain.ScanSessionStore
+import com.expira.app.domain.ScheduleReminderUseCase
 import com.expira.app.imaging.BitmapLoader
 import com.expira.app.imaging.ContentBitmapLoader
 import com.expira.app.imaging.ImagePreprocessor
@@ -36,9 +41,15 @@ class AppContainer(context: Context, isOpenCvReady: Boolean) {
     val historyRepository: ScanHistoryRepository by lazy { ScanHistoryRepository(database.scanDao()) }
     val evaluationRepository: EvaluationRepository by lazy { EvaluationRepository(database.evaluationDao()) }
     val scanSessionStore = ScanSessionStore()
-    val saveScanUseCase: SaveScanUseCase by lazy {
-        SaveScanUseCase(historyRepository, File(context.filesDir, HISTORY_IMAGE_DIR))
+    val reminderNotifier: ReminderNotifier by lazy { ReminderNotifier(context) }
+    private val reminderScheduler: ReminderScheduler by lazy { WorkManagerReminderScheduler(context) }
+    private val scheduleReminderUseCase: ScheduleReminderUseCase by lazy {
+        ScheduleReminderUseCase(historyRepository, reminderScheduler, reminderNotifier::canNotify)
     }
+    val saveScanUseCase: SaveScanUseCase by lazy {
+        SaveScanUseCase(historyRepository, File(context.filesDir, HISTORY_IMAGE_DIR), scheduleReminderUseCase)
+    }
+    val deleteScanUseCase: DeleteScanUseCase by lazy { DeleteScanUseCase(historyRepository, reminderScheduler) }
     val correctDateUseCase: CorrectDateUseCase by lazy { CorrectDateUseCase(saveScanUseCase) }
 
     private companion object {

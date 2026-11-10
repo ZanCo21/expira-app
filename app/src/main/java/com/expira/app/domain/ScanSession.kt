@@ -10,6 +10,10 @@ data class ScanSession(
     /** Upright, downscaled input image; also saved with the history entry. */
     val image: Bitmap,
     val outcome: ScanOutcome,
+    /** F-14: optional product name entered on the result screen. */
+    val productName: String = "",
+    /** F-13: reminder chosen on the result screen; applied when the entry is saved. */
+    val reminder: ReminderChoice? = null,
 )
 
 /**
@@ -22,6 +26,14 @@ class ScanSessionStore {
 
     fun start(session: ScanSession) {
         _current.value = session
+    }
+
+    fun updateProductName(name: String) {
+        _current.value = _current.value?.copy(productName = name)
+    }
+
+    fun updateReminder(choice: ReminderChoice?) {
+        _current.value = _current.value?.copy(reminder = choice)
     }
 
     fun clear() {

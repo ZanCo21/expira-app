@@ -8,10 +8,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 
-/** Saves the reviewed scan (photo + record) to the local history. */
+/** Saves the reviewed scan (photo + record) to the local history and applies its reminder. */
 class SaveScanUseCase(
     private val repository: ScanHistoryRepository,
     private val imageDir: File,
+    private val scheduleReminder: ScheduleReminderUseCase,
     private val now: () -> Long = System::currentTimeMillis,
 ) {
 
@@ -21,7 +22,12 @@ class SaveScanUseCase(
         val imagePath = withContext(Dispatchers.IO) {
             runCatching { storeImage(session.image, createdAt) }.getOrNull()
         }
-        return repository.save(buildScanRecord(session.outcome, finalDate, imagePath, createdAt))
+        val record = buildScanRecord(session.outcome, finalDate, imagePath, createdAt)
+            .copy(productName = session.productName.trim().ifEmpty { null })
+        val id = repository.save(record)
+        // The reminder always follows the final date, also after a manual correction (FR-23).
+        scheduleReminder(id, finalDate, session.reminder)
+        return id
     }
 
     private fun storeImage(image: Bitmap, createdAt: Long): String {

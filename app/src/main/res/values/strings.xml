@@ -112,6 +112,27 @@
     <string name="correction_preview">Pratinjau</string>
     <string name="correction_save">Simpan Koreksi</string>
 
+    <!-- Pengingat (F-13) and product name (F-14) -->
+    <string name="product_name_label">Nama produk (opsional)</string>
+    <string name="product_name_placeholder">Mis. Susu UHT Cokelat</string>
+    <string name="reminder_row">Ingatkan saya sebelum kedaluwarsa</string>
+    <string name="reminder_row_active">%1$s · %2$s</string>
+    <string name="reminder_title">Pengingat kedaluwarsa</string>
+    <string name="reminder_subtitle">%1$s · %2$s</string>
+    <string name="reminder_enable">Aktifkan pengingat</string>
+    <string name="reminder_when">Ingatkan saya</string>
+    <string name="reminder_option_h7">H-7</string>
+    <string name="reminder_option_h3">H-3</string>
+    <string name="reminder_option_h1">H-1</string>
+    <string name="reminder_will_show">Notifikasi akan muncul pada %1$s.</string>
+    <string name="reminder_too_late">Waktu pengingat sudah lewat, sehingga pengingat tidak dapat dijadwalkan.</string>
+    <string name="reminder_permission_note">Jika izin notifikasi ditolak, pengingat tidak aktif. Fitur lainnya tetap berjalan.</string>
+    <string name="reminder_save">Simpan Pengingat</string>
+    <string name="reminder_permission_denied">Izin notifikasi ditolak. Pengingat tidak diaktifkan, fitur lain tetap berjalan.</string>
+    <string name="reminder_channel_name">Pengingat kedaluwarsa</string>
+    <string name="reminder_notification_body">Kedaluwarsa %1$s · %2$s</string>
+    <string name="reminder_active_description">Pengingat aktif</string>
+
     <!-- Riwayat -->
     <string name="history_title">Riwayat</string>
     <string name="history_filter_all">Semua</string>
@@ -119,6 +140,9 @@
     <string name="history_corrected">%1$s · dikoreksi</string>
     <string name="history_empty">Belum ada pemindaian tersimpan.</string>
     <string name="history_filter_empty">Tidak ada pemindaian dengan status ini.</string>
+    <string name="history_delete_title">Hapus entri ini?</string>
+    <string name="history_delete_body">Entri, foto, dan pengingatnya akan dihapus dari ponsel.</string>
+    <string name="history_delete_confirm">Hapus</string>
     <!-- PRD FR-22: label for entries without a product name -->
     <string name="product_unnamed">Produk tanpa nama</string>
 

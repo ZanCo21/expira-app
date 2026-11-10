@@ -6,6 +6,8 @@
         android:required="false" />
 
     <uses-permission android:name="android.permission.CAMERA" />
+    <!-- F-13 reminders; requested at runtime on Android 13+, optional for the core flow. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".ExpiraApplication"

@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -54,7 +55,17 @@ private val tabRoutes = mapOf(
 )
 
 @Composable
-fun ExpiraNavHost(navController: NavHostController = rememberNavController()) {
+fun ExpiraNavHost(
+    openHistory: Boolean = false,
+    onHistoryOpened: () -> Unit = {},
+    navController: NavHostController = rememberNavController(),
+) {
+    LaunchedEffect(openHistory) {
+        if (openHistory) {
+            navController.navigateToTab(Routes.HISTORY)
+            onHistoryOpened()
+        }
+    }
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
     val currentTab = tabRoutes.entries.firstOrNull { it.value == currentRoute }?.key
