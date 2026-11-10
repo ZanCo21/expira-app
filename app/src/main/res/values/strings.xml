@@ -132,6 +132,16 @@
     <string name="reminder_channel_name">Pengingat kedaluwarsa</string>
     <string name="reminder_notification_body">Kedaluwarsa %1$s · %2$s</string>
     <string name="reminder_active_description">Pengingat aktif</string>
+    <!-- Battery optimisation guide (PRD risk mitigation for reminders; not in Figma) -->
+    <string name="battery_hint">Di sebagian ponsel, penghematan baterai dapat menunda atau menahan pengingat.</string>
+    <string name="battery_hint_action">Lihat panduan</string>
+    <string name="battery_guide_title">Kecualikan dari penghematan baterai</string>
+    <string name="battery_guide_step1">Ketuk Buka Pengaturan di bawah.</string>
+    <string name="battery_guide_step2">Pilih Semua aplikasi, lalu cari Expira.</string>
+    <string name="battery_guide_step3">Pilih Jangan optimalkan (atau Tidak dibatasi), lalu kembali ke aplikasi.</string>
+    <string name="battery_guide_note">Nama menu bisa berbeda di tiap merek ponsel. Pada sebagian merek, aktifkan juga izin Mulai otomatis untuk Expira.</string>
+    <string name="battery_guide_open">Buka Pengaturan</string>
+    <string name="battery_guide_later">Nanti</string>
 
     <!-- Riwayat -->
     <string name="history_title">Riwayat</string>
