@@ -23,7 +23,7 @@ import com.expira.app.ui.correction.CorrectionRoute
 import com.expira.app.ui.correction.CorrectionViewModel
 import com.expira.app.ui.evaluation.EvaluationScreen
 import com.expira.app.ui.history.HistoryScreen
-import com.expira.app.ui.home.HomeScreen
+import com.expira.app.ui.home.HomeRoute
 import com.expira.app.ui.processing.ProcessingRoute
 import com.expira.app.ui.processing.ProcessingViewModel
 import com.expira.app.ui.review.ConfirmRoute
@@ -66,9 +66,10 @@ fun ExpiraNavHost(navController: NavHostController = rememberNavController()) {
             modifier = Modifier.weight(1f),
         ) {
             composable(Routes.HOME) {
-                HomeScreen(
+                HomeRoute(
                     onTakePhoto = { navController.navigate(Routes.CAMERA) },
                     onImagePicked = { uri -> navController.navigate(Routes.processing(uri)) },
+                    onSeeAll = { navController.navigateToTab(Routes.HISTORY) },
                 )
             }
             composable(Routes.HISTORY) { HistoryScreen() }
