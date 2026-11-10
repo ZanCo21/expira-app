@@ -20,16 +20,22 @@ import kotlin.math.abs
 class ReminderNotifier(private val context: Context) {
 
     /** True when notifications may be posted (permission on Android 13+ and not blocked). */
-    fun canNotify(): Boolean {
-        val granted = Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
-            ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) ==
-            PackageManager.PERMISSION_GRANTED
-        return granted && NotificationManagerCompat.from(context).areNotificationsEnabled()
-    }
+    fun canNotify(): Boolean = hasPermission() && NotificationManagerCompat.from(context).areNotificationsEnabled()
+
+    private fun hasPermission(): Boolean = Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+        ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) ==
+        PackageManager.PERMISSION_GRANTED
 
     /** @return false when the notification could not be shown (permission missing). */
     fun show(scanId: Long, productName: String?, expiry: CalendarDate, daysRemaining: Long): Boolean {
-        if (!canNotify()) return false
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) !=
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            return false
+        }
+        val manager = NotificationManagerCompat.from(context)
+        if (!manager.areNotificationsEnabled()) return false
         ensureChannel()
         val title = productName?.takeIf { it.isNotBlank() } ?: context.getString(R.string.product_unnamed)
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
@@ -40,9 +46,12 @@ class ReminderNotifier(private val context: Context) {
             .setContentIntent(openHistoryIntent(scanId))
             .setAutoCancel(true)
             .build()
-        return runCatching {
-            NotificationManagerCompat.from(context).notify(NOTIFICATION_TAG, scanId.toInt(), notification)
-        }.isSuccess
+        return try {
+            manager.notify(NOTIFICATION_TAG, scanId.toInt(), notification)
+            true
+        } catch (e: SecurityException) {
+            false // permission revoked between the check and the call
+        }
     }
 
     /** "Kedaluwarsa 12 Agustus 2027 · sisa 7 hari" */
