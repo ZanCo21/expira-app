@@ -15,6 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.expira.app.ui.camera.CameraRoute
 import com.expira.app.ui.components.BottomTab
 import com.expira.app.ui.components.ExpiraBottomNav
 import com.expira.app.ui.evaluation.EvaluationScreen
@@ -28,6 +29,7 @@ object Routes {
     const val HOME = "home"
     const val HISTORY = "history"
     const val EVALUATION = "evaluation"
+    const val CAMERA = "camera"
     const val PROCESSING = "processing?${ProcessingViewModel.ARG_IMAGE_URI}={${ProcessingViewModel.ARG_IMAGE_URI}}"
 
     fun processing(imageUri: Uri): String = "processing?${ProcessingViewModel.ARG_IMAGE_URI}=${Uri.encode(imageUri.toString())}"
@@ -53,12 +55,22 @@ fun ExpiraNavHost(navController: NavHostController = rememberNavController()) {
         ) {
             composable(Routes.HOME) {
                 HomeScreen(
-                    onTakePhoto = {},
+                    onTakePhoto = { navController.navigate(Routes.CAMERA) },
                     onImagePicked = { uri -> navController.navigate(Routes.processing(uri)) },
                 )
             }
             composable(Routes.HISTORY) { HistoryScreen() }
             composable(Routes.EVALUATION) { EvaluationScreen() }
+            composable(Routes.CAMERA) {
+                CameraRoute(
+                    onClose = { navController.popBackStack() },
+                    onImageReady = { uri ->
+                        navController.navigate(Routes.processing(uri)) {
+                            popUpTo(Routes.CAMERA) { inclusive = true }
+                        }
+                    },
+                )
+            }
             composable(
                 route = Routes.PROCESSING,
                 arguments = listOf(navArgument(ProcessingViewModel.ARG_IMAGE_URI) { type = NavType.StringType }),

@@ -18,6 +18,16 @@
     <string name="home_take_photo">Ambil Foto</string>
     <string name="home_pick_gallery">Pilih dari Galeri</string>
 
+    <!-- Kamera -->
+    <string name="camera_hint">Posisikan tanggal kedaluwarsa di dalam bingkai</string>
+    <string name="camera_close">Tutup kamera</string>
+    <string name="camera_flash_off">Lampu kilat mati</string>
+    <string name="camera_flash_on">Lampu kilat menyala</string>
+    <string name="camera_gallery">Pilih dari galeri</string>
+    <string name="camera_capture_failed">Foto gagal diambil. Coba lagi.</string>
+    <string name="camera_permission_message">Izin kamera diperlukan untuk memotret tanggal kedaluwarsa. Anda tetap bisa memilih foto dari galeri.</string>
+    <string name="camera_permission_grant">Izinkan Kamera</string>
+
     <!-- Memproses -->
     <string name="processing_title">Memproses</string>
     <string name="processing_photo">Foto kemasan</string>
