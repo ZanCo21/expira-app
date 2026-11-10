@@ -1,7 +1,9 @@
 package com.expira.app.ui.history
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,8 +19,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -37,6 +41,7 @@ import com.expira.app.ui.components.ScreenHeader
 import com.expira.app.ui.theme.ExpiraColors
 
 /** Figma "Riwayat" (5:43, from the PNG export). */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HistoryScreen(
     modifier: Modifier = Modifier,
@@ -56,10 +61,39 @@ fun HistoryScreen(
                 verticalArrangement = Arrangement.spacedBy(10.dp),
                 modifier = Modifier.fillMaxSize(),
             ) {
-                items(state.items, key = { it.id }) { ScanRow(it) }
+                items(state.items, key = { it.id }) { item ->
+                    ScanRow(
+                        item = item,
+                        modifier = Modifier.combinedClickable(
+                            onClick = {},
+                            onLongClick = { viewModel.requestDelete(item.id) },
+                            onLongClickLabel = stringResource(R.string.history_delete_confirm),
+                        ),
+                    )
+                }
             }
         }
     }
+    if (state.pendingDeleteId != null) {
+        DeleteDialog(onConfirm = viewModel::confirmDelete, onDismiss = viewModel::cancelDelete)
+    }
+}
+
+/** Not in Figma; agreed interaction: long press, then confirm (AC-15). */
+@Composable
+private fun DeleteDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.history_delete_title)) },
+        text = { Text(stringResource(R.string.history_delete_body)) },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text(stringResource(R.string.history_delete_confirm), color = ExpiraColors.Danger)
+            }
+        },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel)) } },
+        containerColor = ExpiraColors.Surface,
+    )
 }
 
 @Composable
