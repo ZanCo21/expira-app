@@ -125,4 +125,30 @@
     <!-- Mode Evaluasi -->
     <string name="evaluation_title">Mode Evaluasi</string>
     <string name="evaluation_subtitle">Untuk pengujian penelitian: bandingkan hasil OCR pada tiap konfigurasi.</string>
+    <string name="evaluation_config_label">Konfigurasi preprocessing</string>
+    <string name="evaluation_desc_p0">P0: tanpa preprocessing (baseline).</string>
+    <string name="evaluation_desc_p1">P1: grayscale dan CLAHE.</string>
+    <string name="evaluation_desc_p2">P2: grayscale, CLAHE, noise removal, dan adaptive threshold.</string>
+    <string name="evaluation_desc_p3">P3: grayscale, CLAHE, noise removal, adaptive threshold, serta deskew/sharpen/closing kondisional.</string>
+    <string name="evaluation_last_result">Hasil uji terakhir</string>
+    <string name="evaluation_match">Cocok</string>
+    <string name="evaluation_mismatch">Tidak cocok</string>
+    <string name="evaluation_raw_text">Teks OCR mentah</string>
+    <string name="evaluation_extracted">Tanggal diekstrak</string>
+    <string name="evaluation_ground_truth">Ground truth</string>
+    <string name="stage_preprocess_short">Preprocessing</string>
+    <string name="stage_ocr_short">OCR</string>
+    <string name="evaluation_extract_validate">Ekstraksi + validasi</string>
+    <string name="evaluation_total">Total</string>
+    <string name="evaluation_none">–</string>
+    <string name="evaluation_run">Jalankan Pengujian</string>
+    <string name="evaluation_running">Menjalankan %1$s…</string>
+    <string name="evaluation_export">Ekspor Log CSV</string>
+    <string name="evaluation_export_done">Log berhasil diekspor.</string>
+    <string name="evaluation_export_failed">Log gagal diekspor.</string>
+    <string name="evaluation_gt_title">Ground truth</string>
+    <string name="evaluation_gt_body">Tanggal kedaluwarsa yang benar pada %1$s. P0 sampai P3 akan dijalankan pada foto ini.</string>
+    <string name="evaluation_gt_placeholder">DD-MM-YYYY</string>
+    <string name="evaluation_gt_error">Format DD-MM-YYYY dengan tanggal yang valid.</string>
+    <string name="evaluation_gt_confirm">Jalankan</string>
 </resources>
